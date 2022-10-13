@@ -21,6 +21,7 @@ stages:
       - task: Docker@2
         displayName: 'Docker - Build image'
         inputs:
+          containerRegistry: 'container-registry'
           repository: '$(imageName)'
           command: 'build'
           Dockerfile: '**/Dockerfile'
@@ -36,7 +37,9 @@ stages:
           containerRegistry: 'container-registry'
           repository: '$(imageName)'
           command: 'push'
-          tags: latest
+          tags: |
+            latest
+            $(versionNumber)
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
       - task: CopyFiles@2
