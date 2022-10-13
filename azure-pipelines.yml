@@ -23,7 +23,7 @@ stages:
         inputs:
           containerRegistry: 'container-registry'
           repository: '$(imageName)'
-          command: 'build'
+          command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
           tags: |
             latest
