@@ -1,1 +1,63 @@
 #deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-challenge-app
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: tech-challenge-app
+      tier: app
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-app
+        tier: app
+    spec:
+      containers:
+        - image: kazzcontainerregistry.azurecr.io/tech-challenge-app
+          imagePullPolicy: IfNotPresent
+          name: tech-challenge-app
+          ports:
+            - containerPort: 80
+              name: http
+          livenessProbe:            
+            httpGet:
+              path: /hc
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /rc
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20              
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tech-challenge-app
+  name: tech-challenge-app
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: tech-challenge-app
+  type: ClusterIP
