@@ -21,15 +21,21 @@ stages:
       - task: Docker@2
         displayName: 'Docker - Build image'
         inputs:
-          containerRegistry: 'container-registry'
           repository: '$(imageName)'
-          command: 'buildAndPush'
+          command: 'build'
           Dockerfile: '**/Dockerfile'
           tags: |
             latest
             $(versionNumber)
           arguments: '--build-arg arch=amd64 -t servian/techchallengeapp:latest'
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      
+      - task: Docker@2
+        displayName: 'Docker - Push image to ACS'
+        inputs:
+          containerRegistry: 'container-registry'
+          repository: '$(imageName)'
+          command: 'push'
 
       - task: CopyFiles@2
         displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
