@@ -36,9 +36,7 @@ stages:
           containerRegistry: 'container-registry'
           repository: '$(imageName)'
           command: 'push'
-          tags: |
-            latest
-            $(versionNumber)
+          tags: latest
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
       - task: CopyFiles@2
