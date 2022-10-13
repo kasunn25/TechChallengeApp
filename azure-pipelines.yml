@@ -34,7 +34,12 @@ stages:
         displayName: 'Docker - Push image to ACS'
         inputs:
           containerRegistry: 'container-registry'
+          repository: '$(imageName)'
           command: 'push'
+          tags: |
+            latest
+            $(versionNumber)
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
       - task: CopyFiles@2
         displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
