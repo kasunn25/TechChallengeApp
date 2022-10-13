@@ -20,7 +20,7 @@ spec:
         tier: app
     spec:
       containers:
-        - image: kazzcontainerregistry.azurecr.io/tech-challenge-app
+        - image: kazzcontainerregistry.azurecr.io/tech-challenge-app:latest
           imagePullPolicy: IfNotPresent
           name: tech-challenge-app
           ports:
