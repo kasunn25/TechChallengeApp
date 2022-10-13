@@ -36,6 +36,9 @@ stages:
           containerRegistry: 'container-registry'
           repository: '$(imageName)'
           command: 'push'
+          tags: |
+            latest
+            $(versionNumber)
 
       - task: CopyFiles@2
         displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
