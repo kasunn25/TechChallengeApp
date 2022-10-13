@@ -1,0 +1,43 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- develop
+- pipeline/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build Project
+  variables: 
+  - template: azure-pipelines-variables.yml
+  jobs:
+  - job: Build
+    displayName: Build
+    
+    steps:
+      - task: Docker@2
+        displayName: 'Docker - Build image'
+        inputs:
+          repository: '$(imageName)'
+          command: 'build'
+          Dockerfile: '**/Dockerfile'
+          tags: |
+            latest
+            $(versionNumber)
+          arguments: '--build-arg arch=amd64 -t servian/techchallengeapp:latest'
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+      - task: CopyFiles@2
+        displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+        inputs:
+          Contents: 'k8s/**'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: drop'
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))

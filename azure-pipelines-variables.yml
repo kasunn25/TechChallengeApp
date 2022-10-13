@@ -1,0 +1,8 @@
+# variables.yml
+variables:
+- name: imageName
+  value: 'tech-challenge-app'
+- name: buildNumber
+  value: '1.0.0'
+- name: versionNumber
+  value: 'v1.0'
