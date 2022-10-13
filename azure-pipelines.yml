@@ -21,6 +21,7 @@ stages:
       - task: Docker@2
         displayName: 'Docker - Build image'
         inputs:
+          containerRegistry: 'container-registry'
           repository: '$(imageName)'
           command: 'build'
           Dockerfile: '**/Dockerfile'
