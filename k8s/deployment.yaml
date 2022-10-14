@@ -16,15 +16,32 @@ spec:
         tier: app
     spec:
       containers:
-        - image: kazzcontainerregistry.azurecr.io/tech-challenge-app:latest
+        - args: ["serve"]
+          image: kazzcontainerregistry.azurecr.io/tech-challenge-app:latest
           imagePullPolicy: IfNotPresent
           name: tech-challenge-app
           ports:
-            - containerPort: 80
-              name: http
-      imagePullSecrets: 
-      - name: acs-secret
-
+            - containerPort: 3000
+              name: web
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /TechChallengeApp/conf.toml
+              subPath: conf.toml
+      imagePullSecrets:
+            - name: acs-secret
+      volumes:
+        - name: config
+          configMap:
+           name: appconfig
+ 
 ---
 apiVersion: v1
 kind: Service
@@ -35,7 +52,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 3000
   selector:
     app: tech-challenge-app
   type: ClusterIP
