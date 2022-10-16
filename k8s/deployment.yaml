@@ -1,1 +1,59 @@
 #deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-challenge-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tech-challenge-app
+      tier: app
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-app
+        tier: app
+    spec:
+      containers:
+        - args: ["serve"] # TechChallengeApp argument
+          image: kazzcontainerregistry.azurecr.io/tech-challenge-app:latest # ACR Image repository 
+          imagePullPolicy: IfNotPresent
+          name: tech-challenge-app
+          ports:
+            - containerPort: 3000
+              name: web
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /TechChallengeApp/conf.toml
+              subPath: conf.toml
+      imagePullSecrets:
+      - name: acs-secret
+      volumes:
+        - name: config
+          secret:
+            secretName: appconfig
+ 
+---
+# incomming requests from ingress will be routed to this clusterIp 
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tech-challenge-app
+  name: tech-challenge-app
+spec:
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    app: tech-challenge-app
+  type: ClusterIP
