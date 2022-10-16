@@ -3,7 +3,6 @@
 
 trigger:
 - develop
-- pipeline/*
 
 pool:
   vmImage: 'ubuntu-latest'

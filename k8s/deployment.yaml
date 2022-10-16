@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: tech-challenge-app
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: tech-challenge-app
@@ -16,8 +16,8 @@ spec:
         tier: app
     spec:
       containers:
-        - args: ["serve"]
-          image: kazzcontainerregistry.azurecr.io/tech-challenge-app:latest
+        - args: ["serve"] # TechChallengeApp argument
+          image: kazzcontainerregistry.azurecr.io/tech-challenge-app:latest # ACR Image repository 
           imagePullPolicy: IfNotPresent
           name: tech-challenge-app
           ports:
@@ -36,13 +36,14 @@ spec:
               mountPath: /TechChallengeApp/conf.toml
               subPath: conf.toml
       imagePullSecrets:
-            - name: acs-secret
+      - name: acs-secret
       volumes:
         - name: config
-          configMap:
-           name: appconfig
+          secret:
+            secretName: appconfig
  
 ---
+# incomming requests from ingress will be routed to this clusterIp 
 apiVersion: v1
 kind: Service
 metadata:
