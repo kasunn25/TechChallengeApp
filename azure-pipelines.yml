@@ -1,10 +1,8 @@
-# Docker
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
 - develop
-- pipeline/*
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -18,10 +16,15 @@ stages:
   - job: Build
     displayName: Build
     
+    # Include sonarqube code quality checks
+    # Include code build and test automations
+    # Include pipeline gates bease on test converage
+    
     steps:
       - task: Docker@2
         displayName: 'Docker - Build image'
         inputs:
+          containerRegistry: 'container-registry'
           repository: '$(imageName)'
           command: 'build'
           Dockerfile: '**/Dockerfile'
@@ -29,6 +32,17 @@ stages:
             latest
             $(versionNumber)
           arguments: '--build-arg arch=amd64 -t servian/techchallengeapp:latest'
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      
+      - task: Docker@2
+        displayName: 'Docker - Push image to ACS'
+        inputs:
+          containerRegistry: 'container-registry'
+          repository: '$(imageName)'
+          command: 'push'
+          tags: |
+            latest
+            $(versionNumber)
         condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
       - task: CopyFiles@2
