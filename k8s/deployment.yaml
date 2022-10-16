@@ -24,18 +24,6 @@ spec:
             - containerPort: 3000
               name: web
               protocol: TCP
-          livenessProbe:            
-            httpGet:
-              path: /healthcheck
-              port: 80
-            initialDelaySeconds: 15
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              path: /healthcheck
-              port: 80
-            initialDelaySeconds: 15
-            periodSeconds: 20 
           resources:
             requests:
               cpu: 100m
