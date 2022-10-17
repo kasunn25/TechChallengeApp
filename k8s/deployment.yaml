@@ -18,7 +18,7 @@ spec:
       containers:
         - args: ["serve"] # TechChallengeApp argument
           image: kazzcontainerregistry.azurecr.io/tech-challenge-app:latest # ACR Image repository 
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: tech-challenge-app
           ports:
             - containerPort: 3000
